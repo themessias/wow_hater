@@ -18,7 +18,7 @@ async def kickMember(member, param):
                     print("entrou")
                     await channel.send("O membro "+member.name+" foi expulso do"
                     +"servidor. Motivo: **jogando wow**")
-                    await member.send("https://discord.gg/6gegE4X6Kg")
+                    await member.send(os.getenv('INVITE')
                     await member.kick(reason='Jogando WOW')
                 except discord.errors.Forbidden:
                     await channel.send("Não possui permissão para expulsar "+member.name)
