@@ -4,7 +4,7 @@ import os
 
 intents = discord.Intents.all()
 intents.members = True
-bot = discord.Client(command_prefix= '.', intents=intents)
+bot = commands.Bot(command_prefix= '!', intents=intents)
 
 @bot.event
 async def on_ready():
@@ -41,17 +41,8 @@ async def on_message(message):
         kickMember(miland)
     elif "wow" in message.content or "world of warcraft" in message.content:
         await message.channel.send('Eu odeio wow!')
-    elif message.content.startswith("!check"):
-        nickname = message.content.removeprefix("!check ")
-        for guild in bot.guilds:
-            member = guild.get_member_named(nickname)
-            print(member)
-            if member == None:
-                await message.channel.send('Membro não encontrado.')
-            else:
-                await kickMember(member, "manual")
-
-
+    
+    await bot.process_commands(message)
 
 @bot.event
 async def on_member_update(previous, current):
@@ -63,6 +54,18 @@ async def checkUsers():
     for guild in bot.guilds:
         for member in guild.members:
             await kickMember(member, "auto")
+
+@bot.command()
+async def check(ctx):
+    nickname = ctx.message.content.removeprefix("!check ")
+    print(nickname)
+    for guild in bot.guilds:
+        member = guild.get_member_named(nickname)
+        print(member)
+        if member == None:
+            await ctx.channel.send('Membro não encontrado.')
+        else:
+            await kickMember(member, "manual")
 
 checkUsers.start()
 
