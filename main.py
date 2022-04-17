@@ -13,7 +13,7 @@ async def on_ready():
 async def kickMember(member, param):
     channel = bot.get_channel(931670261089071125)
     for activity in member.activities:
-            if "elden ring" in activity.name.lower():
+            if "world of warcraft" in activity.name.lower():
                 try:
                     print("entrou")
                     #await channel.send("O membro "+member.name+" foi expulso do"
