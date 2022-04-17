@@ -18,7 +18,7 @@ async def kickMember(member, param):
                     print("entrou")
                     await channel.send("O membro "+member.name+" foi expulso do"
                     +"servidor. Motivo: **jogando wow**")
-                    await member.send(os.getenv('INVITE'))
+                    await member.send('discord.gg/invite/6gegE4X6Kg')
                     await member.kick(reason='Jogando WOW')
                 except discord.errors.Forbidden:
                     await channel.send("Não possui permissão para expulsar "+member.name)
@@ -37,7 +37,7 @@ async def on_message(message):
     and "jogando wow" in message.content \
     and bot.user.mentioned_in(message):
         guild = bot.get_guild(657780431256682496)
-        miland = guild.get_member(224176860181954562)
+        miland = guild.get_member(os.getenv('FRIEND'))
         kickMember(miland)
     elif "wow" in message.content or "world of warcraft" in message.content:
         await message.channel.send('Eu odeio wow!')
