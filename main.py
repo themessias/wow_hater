@@ -39,7 +39,7 @@ async def on_message(message):
         guild = bot.get_guild(657780431256682496)
         miland = guild.get_member(224176860181954562)
         kickMember(miland)
-    elif "wow" in message.content:
+    elif "wow" in message.content or "world of warcraft" in message.content:
         await message.channel.send('Eu odeio wow!')
     elif message.content.startswith("!check"):
         nickname = message.content.removeprefix("!check ")
