@@ -9,22 +9,30 @@ bot = commands.Bot(command_prefix= '!', intents=intents)
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user.name}'.format(bot))
+    for guild in bot.guilds:
+        for member in guild.members:
+            await checkMember(member, None, "auto")
 
-async def kickMember(member, param):
-    channel = bot.get_channel(931670261089071125)
-    for activity in member.activities:
+async def checkMember(member, channel, param):
+    if channel == None:
+        channelId = bot.guilds[0].text_channels[0].id
+        channel = bot.get_channel(channelId)
+    if member.activities:
+        for activity in member.activities:
             if "world of warcraft" in activity.name.lower():
-                try:
-                    print("entrou")
-                    await channel.send("O membro "+member.name+" foi expulso do"
-                    +"servidor. Motivo: **jogando wow**")
-                    await member.send('discord.gg/invite/6gegE4X6Kg')
-                    await member.kick(reason='Jogando WOW')
-                except discord.errors.Forbidden:
-                    await channel.send("Não possui permissão para expulsar "+member.name)
+                await kickMember(member, channel)
     else:
-        if  param == "manual":
-            await channel.send("O membro não está fazendo nada ilegal.")
+        if param == "manual":
+            await channel.send("Member "+member.name+"isn't playing wow.")
+
+async def kickMember(member, channel):
+    try:
+        await channel.send("Member "+member.name+" was kicked from"
+        +"the server. Reason: **Playing WOW**")
+        await member.send(os.getenv('INVITE'))
+        await member.kick(reason='Playing WOW')
+    except discord.errors.Forbidden:
+        await channel.send("I can't kick "+member.name)
                 
 @bot.event
 async def on_message(message):
@@ -36,36 +44,40 @@ async def on_message(message):
     if [element for element in milandia if (element in message.content)] \
     and "jogando wow" in message.content \
     and bot.user.mentioned_in(message):
-        guild = bot.get_guild(657780431256682496)
+        guild = bot.get_guild(message.guild.id)
         miland = guild.get_member(os.getenv('FRIEND'))
-        kickMember(miland)
+        await checkMember(miland, message.channel.id, "manual")
     elif "wow" in message.content or "world of warcraft" in message.content:
-        await message.channel.send('Eu odeio wow!')
+        await message.channel.send('I hate wow!')
     
     await bot.process_commands(message)
 
 @bot.event
 async def on_member_update(previous, current):
     if current.activity != None:
-        await kickMember(current, "auto")
+        await checkMember(current, None, "auto")
 
 @tasks.loop(minutes=30)
 async def checkUsers():
     for guild in bot.guilds:
         for member in guild.members:
-            await kickMember(member, "auto")
+            await checkMember(member, None, "auto")
 
-@bot.command()
+@bot.command(
+    help="Check if user is playing wow if so he/she is removed from the server",
+    brief="Check user's activity"
+)
 async def check(ctx):
     nickname = ctx.message.content.removeprefix("!check ")
     print(nickname)
-    for guild in bot.guilds:
-        member = guild.get_member_named(nickname)
-        print(member)
-        if member == None:
-            await ctx.channel.send('Membro não encontrado.')
-        else:
-            await kickMember(member, "manual")
+    channel = ctx.message.channel
+    guild = ctx.guild
+    member = guild.get_member_named(nickname)
+    print(member)
+    if member == None:
+        await ctx.channel.send('Membro não encontrado.')
+    else:
+        await checkMember(member, channel, "manual")
 
 checkUsers.start()
 
