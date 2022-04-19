@@ -28,7 +28,7 @@ async def checkMember(member, channel, param):
 async def kickMember(member, channel):
     try:
         await channel.send("Member "+member.name+" was kicked from"
-        +"the server. Reason: **Playing WOW**")
+        +" the server.Reason: **Playing WOW**")
         await member.send(os.getenv('INVITE'))
         await member.kick(reason='Playing WOW')
     except discord.errors.Forbidden:
