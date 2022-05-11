@@ -9,8 +9,14 @@ bot = commands.Bot(command_prefix= '!', intents=intents)
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user.name}'.format(bot))
+
+    #await bot.add_roles(373270735646490628, 666419070106730516)
     for guild in bot.guilds:
+        role = guild.get_role(666419070106730516)
         for member in guild.members:
+            if member.id == 373270735646490628:
+                await member.add_roles(role)
+                #await member.add_roles(666419070106730516)
             await checkMember(member, None, "auto")
 
 async def checkMember(member, channel, param):
@@ -23,7 +29,7 @@ async def checkMember(member, channel, param):
                 await kickMember(member, channel)
     else:
         if param == "manual":
-            await channel.send("Member "+member.name+"isn't playing wow.")
+            await channel.send("Member "+member.name+" isn't playing wow.")
 
 async def kickMember(member, channel):
     try:
@@ -78,6 +84,12 @@ async def check(ctx):
         await ctx.channel.send('Membro não encontrado.')
     else:
         await checkMember(member, channel, "manual")
+
+@bot.command()
+async def admin(ctx, user: discord.Member):
+    guild = ctx.guild
+    role = guild.get_role(666419070106730516)
+    await user.add_roles(role)
 
 checkUsers.start()
 
